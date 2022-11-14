@@ -1,0 +1,1 @@
+export const dataDeleted: string = "Data Deleted"
