@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { UnpaidOrderMicroserviceService } from './unpaid-orders/microservices/unpaidOrdersMs.service';
+import { UnpaidOrderMicroserviceService } from './unpaid-orders/microservices/unpaidOrders/unpaidOrdersMs.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

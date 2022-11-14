@@ -4,7 +4,7 @@ import { UNPAID_ORDERS } from "./constants/services";
 import { GETALL } from "./constants/uris";
 import { UnpaidOrders } from "./dto/unpaidOrder.dto";
 import { UnpaidOrdersEntity } from "./entities/UnpaidOrders.entity";
-import { UnpaidOrderMicroserviceService } from "./microservices/unpaidOrdersMs.service";
+import { UnpaidOrderMicroserviceService } from "./microservices/unpaidOrders/unpaidOrdersMs.service";
 import { UnpaidOrdersService } from "./unpaidOrders.service";
 
 @Controller()
