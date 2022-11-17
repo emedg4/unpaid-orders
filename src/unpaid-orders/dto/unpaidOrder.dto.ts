@@ -2,7 +2,7 @@ export class UnpaidOrders {
 
     public pedido: string;
 
-    public status: string;
+    public status_principal: string;
 
     public tienda: string;
 
@@ -10,6 +10,6 @@ export class UnpaidOrders {
 
     public cliente: string;
 
-    public fechaCreacion: Date;
+    public fecha_creacion: string;
     
 }

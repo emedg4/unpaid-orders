@@ -19,5 +19,5 @@ export class UnpaidOrdersEntity {
     public Cliente: string;
 
     @Column()
-    public FechaCreacion: Date;
+    public FechaCreacion: string;
 }

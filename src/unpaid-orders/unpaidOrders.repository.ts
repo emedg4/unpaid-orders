@@ -14,8 +14,8 @@ export class UnpaidOrdersRepository {
     async create( data: UnpaidOrders ): Promise<UnpaidOrdersEntity>{
         const createUnpaidOrder: UnpaidOrdersEntity = new UnpaidOrdersEntity();
         createUnpaidOrder.Pedido = data.pedido;
-        createUnpaidOrder.FechaCreacion = data.fechaCreacion;
-        createUnpaidOrder.Status = data.status;
+        createUnpaidOrder.FechaCreacion = data.fecha_creacion;
+        createUnpaidOrder.Status = data.status_principal;
         createUnpaidOrder.Tienda = data.tienda;
         createUnpaidOrder.Vitrina = data.vitrina;
         createUnpaidOrder.Cliente = data.cliente;
