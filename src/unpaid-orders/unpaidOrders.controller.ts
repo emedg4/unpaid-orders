@@ -22,7 +22,7 @@ export class UnpaidOrdersController {
             this.unpaidOrdersMs.ack(context)
             this.logger.log(`New Order created: ${data.pedido}`)
             
-            return newUnpaidOrder;
+            return;
         } catch (e) {
             this.logger.log(e)
             return;

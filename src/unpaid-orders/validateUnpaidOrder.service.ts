@@ -4,6 +4,7 @@ import { ConfigService } from "@nestjs/config";
 import { ClientProxy } from "@nestjs/microservices";
 import { Interval } from "@nestjs/schedule";
 import { firstValueFrom } from "rxjs";
+import { DummyService } from "src/dummy/dummy.service";
 import { INGRESADOS, PAGADO, SINPAGAR } from "./constants/Estatus";
 import { MODIFY_ORDERS } from "./constants/services";
 import { PaidOrder } from "./dto/paidOrder";
@@ -14,36 +15,58 @@ import { UnpaidOrdersRepository } from "./unpaidOrders.repository";
 export class ValidateUnpaidOrderCron {
     private logger: Logger;
     constructor( private readonly httpService: HttpService,
+                 private dummyService: DummyService,
+
                  @Inject(MODIFY_ORDERS) private modifyOrdersClient: ClientProxy,
+                 
                  private configService: ConfigService,
                  private unpaidOrdersRepository: UnpaidOrdersRepository){
         this.logger = new Logger(ValidateUnpaidOrderCron.name);
     }
 
-    @Interval(1000)
+    @Interval(3000)
     async validateOrders(){
+        
         const allOrders = await this.unpaidOrdersRepository.getAll()
 
 
         allOrders.map(async (value: UnpaidOrdersEntity)=> {
             const pedido = value.Pedido
+            const messageToInformer = {
+                pedido: pedido,
+                paso: `Pedido pagado`,
+                time:`3000 ms`,
+            }
             const response = await firstValueFrom(this.httpService.get(this.configService.get('validateOrders.url')));
+
             if(response.data == true){
-                const pedidoPagado: PaidOrder = {
+                const response = {
                     pedido: pedido,
-                    status: {
-                        status: INGRESADOS,
-                        nuevo: PAGADO,
-                        previo: SINPAGAR
-                    }
+                    tenant: null,
+                    commingFrom: "UnpaidOrders",
+                    queue: 'Unpaid_Orders',
+                    data: `Order ${pedido} paid`,
+                    status: INGRESADOS
                 }
 
-                this.modifyOrdersClient.emit(MODIFY_ORDERS, pedidoPagado)
-                this.logger.log(`Pedido ${pedidoPagado.pedido} pagado`)
-
+                this.emitToModifyOrders(response)
                 this.unpaidOrdersRepository.delete(pedido);
+                this.dummyService.emitToInformer(messageToInformer)
+            }
+            else{
+                const messageToInformer = {
+                    pedido: pedido,
+                    paso: `NO SE HA REALIZADO PAGO DE ESTE PEDIDO`,
+                    time:`3000 ms`,
+                }
+                this.dummyService.emitToInformer(messageToInformer)
+
             }
         });
         
+    }
+
+    public async emitToModifyOrders(data){
+        this.modifyOrdersClient.emit(MODIFY_ORDERS, data)
     }
 }
