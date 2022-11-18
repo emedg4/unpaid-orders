@@ -9,7 +9,7 @@ import { Dummy3MicroserviceService } from "./microservices/dummy3/dummy3Ms.servi
 import { Dummy4MicroserviceService } from "./microservices/dummy4/dummy4Ms.service";
 import { Dummy5MicroserviceService } from "./microservices/dummy5/dummy5Ms.service";
 
-@Controller(DUMMY_URI)
+@Controller()
 export class DummyController {
     private logger: Logger;
     constructor(private dummyService: DummyService,

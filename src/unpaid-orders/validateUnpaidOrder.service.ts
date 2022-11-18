@@ -1,5 +1,5 @@
 import { HttpService } from "@nestjs/axios";
-import { Inject, Injectable, Logger } from "@nestjs/common";
+import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ClientProxy } from "@nestjs/microservices";
 import { Interval } from "@nestjs/schedule";
@@ -15,18 +15,17 @@ import { UnpaidOrdersRepository } from "./unpaidOrders.repository";
 export class ValidateUnpaidOrderCron {
     private logger: Logger;
     constructor( private readonly httpService: HttpService,
+                 @Inject(forwardRef(()=> DummyService))
                  private dummyService: DummyService,
-
-                 @Inject(MODIFY_ORDERS) private modifyOrdersClient: ClientProxy,
-                 
                  private configService: ConfigService,
-                 private unpaidOrdersRepository: UnpaidOrdersRepository){
+                 private unpaidOrdersRepository: UnpaidOrdersRepository,
+                 @Inject(MODIFY_ORDERS) private modifyOrdersClient: ClientProxy,
+                 ){
         this.logger = new Logger(ValidateUnpaidOrderCron.name);
     }
 
-    @Interval(3000)
+    @Interval(1000)
     async validateOrders(){
-        
         const allOrders = await this.unpaidOrdersRepository.getAll()
 
 
@@ -46,7 +45,8 @@ export class ValidateUnpaidOrderCron {
                     commingFrom: "UnpaidOrders",
                     queue: 'Unpaid_Orders',
                     data: `Order ${pedido} paid`,
-                    status: INGRESADOS
+                    status: INGRESADOS,
+                    status_pago:"Pagado"
                 }
 
                 this.emitToModifyOrders(response)

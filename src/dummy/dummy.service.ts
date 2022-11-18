@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from "@nestjs/common";
+import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { ENDESPACHO, ENPREPARACION, FINALIZADOS, INGRESADOS } from "src/unpaid-orders/constants/Estatus";
 import { ValidateUnpaidOrderCron } from "src/unpaid-orders/validateUnpaidOrder.service";
@@ -8,7 +8,9 @@ import { Order } from "./dto/order.dto";
 @Injectable()
 export class DummyService {
     private logger: Logger;
-    constructor( private validateUnpaidOrder: ValidateUnpaidOrderCron,
+    constructor( 
+        @Inject(forwardRef(() => ValidateUnpaidOrderCron))
+        private validateUnpaidOrder: ValidateUnpaidOrderCron,
 
         @Inject( INFORMER ) private informerMS: ClientProxy){
 
@@ -17,7 +19,7 @@ export class DummyService {
         }
 
     async dummy1Process(data: Order){
-        const timeout = await this.getARandomNumber();
+        const timeout = 3000
         const messageToInformer = {
             pedido: data.pedido,
             paso: `Pedido pasando por dummy1`,
@@ -140,7 +142,7 @@ export class DummyService {
     }
 
     async getARandomNumber(){
-        return Math.floor(Math.random() * 20000);
+        return Math.floor(Math.random() * 5000);
     }
 
     async emitToInformer(messageToInformer){

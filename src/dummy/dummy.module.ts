@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { DUMMY1, DUMMY2, DUMMY3, DUMMY4, DUMMY5, INFORMER } from "./constants/services";
 import { Dummy1MicroserviceModule } from "./microservices/dummy1/dummy1Ms.module";
 import { Dummy2MicroserviceModule } from "./microservices/dummy2/dummy2Ms.module";
@@ -30,7 +30,7 @@ import { InformerMicroserviceModule } from "src/microservices/dummy5/informerMs.
         InformerMicroserviceModule.register({
             name: INFORMER
         }),
-        UnpaidOrdersModule
+        forwardRef(() => UnpaidOrdersModule ) 
     ],
     controllers:[DummyController],
     providers:[DummyService],

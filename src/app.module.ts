@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import configuration from './configuration/configuration';
+import { DummyModule } from './dummy/dummy.module';
 import { UnpaidOrdersModule } from './unpaid-orders/unpaidOrders.module';
 
 @Module({
@@ -26,6 +27,7 @@ import { UnpaidOrdersModule } from './unpaid-orders/unpaidOrders.module';
 
             }),
   UnpaidOrdersModule,
+  DummyModule,
   ScheduleModule.forRoot()
   
             ],

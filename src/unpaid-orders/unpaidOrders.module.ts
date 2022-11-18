@@ -1,5 +1,5 @@
 import { HttpModule } from "@nestjs/axios";
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DummyModule } from "src/dummy/dummy.module";
 import { MODIFY_ORDERS, UNPAID_ORDERS } from "./constants/services";
@@ -13,18 +13,21 @@ import { ValidateUnpaidOrderCron } from "./validateUnpaidOrder.service";
 
 @Module({
     imports:[ TypeOrmModule.forFeature([UnpaidOrdersEntity]),
+
               UnpaidOrderMicroserviceModule.register({
                 name: UNPAID_ORDERS
               }),
+              
               ModifyOrderMicroserviceModule.register({
                 name: MODIFY_ORDERS
               }),
-              HttpModule, DummyModule,
+              HttpModule, forwardRef(() => DummyModule)  ,
             ],
     controllers:[UnpaidOrdersController],
     providers:[ UnpaidOrdersRepository,
                 UnpaidOrdersService,
                 ValidateUnpaidOrderCron],
-    exports:[UnpaidOrdersService,UnpaidOrdersRepository]
+
+    exports:[UnpaidOrdersService,UnpaidOrdersRepository, ValidateUnpaidOrderCron]
 })
 export class UnpaidOrdersModule {}
