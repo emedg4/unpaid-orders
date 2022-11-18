@@ -5,9 +5,8 @@ import { ClientProxy } from "@nestjs/microservices";
 import { Interval } from "@nestjs/schedule";
 import { firstValueFrom } from "rxjs";
 import { DummyService } from "src/dummy/dummy.service";
-import { INGRESADOS, PAGADO, SINPAGAR } from "./constants/Estatus";
+import { INGRESADOS } from "./constants/Estatus";
 import { MODIFY_ORDERS } from "./constants/services";
-import { PaidOrder } from "./dto/paidOrder";
 import { UnpaidOrdersEntity } from "./entities/UnpaidOrders.entity";
 import { UnpaidOrdersRepository } from "./unpaidOrders.repository";
 
@@ -51,7 +50,6 @@ export class ValidateUnpaidOrderCron {
 
                 this.emitToModifyOrders(response)
                 this.unpaidOrdersRepository.delete(pedido);
-                this.dummyService.emitToInformer(messageToInformer)
             }
             else{
                 const messageToInformer = {
@@ -59,7 +57,6 @@ export class ValidateUnpaidOrderCron {
                     paso: `NO SE HA REALIZADO PAGO DE ESTE PEDIDO`,
                     time:`3000 ms`,
                 }
-                this.dummyService.emitToInformer(messageToInformer)
 
             }
         });

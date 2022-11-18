@@ -3,6 +3,7 @@ import { ClientProxy } from "@nestjs/microservices";
 import { ENDESPACHO, ENPREPARACION, FINALIZADOS, INGRESADOS } from "src/unpaid-orders/constants/Estatus";
 import { ValidateUnpaidOrderCron } from "src/unpaid-orders/validateUnpaidOrder.service";
 import { DUMMY1, DUMMY2, DUMMY3, DUMMY4, DUMMY5, INFORMER } from "./constants/services";
+import { LoggingMessage } from "./dto/loggingMessage";
 import { Order } from "./dto/order.dto";
 
 @Injectable()
@@ -12,20 +13,15 @@ export class DummyService {
         @Inject(forwardRef(() => ValidateUnpaidOrderCron))
         private validateUnpaidOrder: ValidateUnpaidOrderCron,
 
-        @Inject( INFORMER ) private informerMS: ClientProxy){
+        @Inject( INFORMER ) private informerClient: ClientProxy){
 
             this.logger = new Logger(DummyService.name);
 
         }
 
     async dummy1Process(data: Order){
-        const timeout = 3000
-        const messageToInformer = {
-            pedido: data.pedido,
-            paso: `Pedido pasando por dummy1`,
-            time:`Se tomaran ${timeout} ms para terminar este proceso`,
-        }
-        
+        const timeout = await this.getARandomNumber();
+          
         setTimeout(() => {
             const response = {
                 pedido: data.pedido,
@@ -35,20 +31,22 @@ export class DummyService {
                 data: "Data or whatever you need to do",
                 status: INGRESADOS
             }
+            const messageToInformer1: LoggingMessage = {
+                pedido: data.pedido,
+                microservicioOrigen: `Dummy1Process`,
+                accion: "Recibiendo el pedido en Dummy1Process...Procesando ",
+                data: `Queue --${DUMMY1}`
+            }
+            this.informerClient.emit(INFORMER, messageToInformer1)
 
             this.validateUnpaidOrder.emitToModifyOrders(response)
-            this.emitToInformer(messageToInformer)
+
         }, timeout);
     }
 
     async dummy2Process(data: Order){
         const timeout = await this.getARandomNumber();
-        const messageToInformer = {
-            pedido: data.pedido,
-            paso: `Pedido pasando por dummy2`,
-            time:`Se tomaran ${timeout} ms para terminar este proceso`,
-        }
-        
+
         setTimeout(() => {
             const response = {
                 pedido: data.pedido,
@@ -60,20 +58,23 @@ export class DummyService {
 
                 
             }
+            const messageToInformer1: LoggingMessage = {
+                pedido: data.pedido,
+                microservicioOrigen: `Dummy2Process`,
+                accion: "Recibiendo el pedido en Dummy2Process...Procesando ",
+                data: `Queue --${DUMMY2}`
+            }
+    
+            this.informerClient.emit(INFORMER, messageToInformer1)
 
             this.validateUnpaidOrder.emitToModifyOrders(response)
-            this.emitToInformer(messageToInformer)
 
         }, timeout);
     }
 
     async dummy3Process(data: Order){
         const timeout = await this.getARandomNumber();
-        const messageToInformer = {
-            pedido: data.pedido,
-            paso: `Pedido pasando por dummy3`,
-            time:`Se tomaran ${timeout} ms para terminar este proceso`,
-        }
+
         setTimeout(() => {
             const response = {
                 pedido: data.pedido,
@@ -84,20 +85,22 @@ export class DummyService {
                 status: ENPREPARACION
 
             }
+            const messageToInformer1: LoggingMessage = {
+                pedido: data.pedido,
+                microservicioOrigen: `Dummy3Process`,
+                accion: "Recibiendo el pedido en Dummy3Process...Procesando ",
+                data: `Queue --${DUMMY3}`
+            }
+            this.informerClient.emit(INFORMER, messageToInformer1)
 
             this.validateUnpaidOrder.emitToModifyOrders(response)
-            this.emitToInformer(messageToInformer)
 
         }, timeout);
     }
 
     async dummy4Process(data: Order){
         const timeout = await this.getARandomNumber();
-        const messageToInformer = {
-            pedido: data.pedido,
-            paso: `Pedido pasando por dummy4`,
-            time:`Se tomaran ${timeout} ms para terminar este proceso`,
-        }
+
         setTimeout(() => {
             const response = {
                 pedido: data.pedido,
@@ -108,20 +111,21 @@ export class DummyService {
                 status: ENDESPACHO
 
             }
+            const messageToInformer1: LoggingMessage = {
+                pedido: data.pedido,
+                microservicioOrigen: `Dummy4Process`,
+                accion: "Recibiendo el pedido en Dummy4Process...Procesando ",
+                data: `Queue --${DUMMY4}`
+            }
+            this.informerClient.emit(INFORMER, messageToInformer1)
 
             this.validateUnpaidOrder.emitToModifyOrders(response)
-            this.emitToInformer(messageToInformer)
 
         }, timeout);
     }
 
     async dummy5Process(data: Order){
         const timeout = await this.getARandomNumber();
-        const messageToInformer = {
-            pedido: data.pedido,
-            paso: `Pedido pasando por dummy5`,
-            time:`Se tomaran ${timeout} ms para terminar este proceso`,
-        }
 
         setTimeout(() => {
             const response = {
@@ -133,10 +137,15 @@ export class DummyService {
                 status: FINALIZADOS
 
             }
+            const messageToInformer1: LoggingMessage = {
+                pedido: data.pedido,
+                microservicioOrigen: `Dummy5Process`,
+                accion: "Recibiendo el pedido en Dummy5Process...Procesando ",
+                data: `Queue --${DUMMY5}`
+            }
+            this.informerClient.emit(INFORMER, messageToInformer1)
 
-            this.validateUnpaidOrder.emitToModifyOrders(response)
-            this.emitToInformer(messageToInformer)
-            
+            this.validateUnpaidOrder.emitToModifyOrders(response)            
 
         }, timeout);
     }
@@ -145,8 +154,4 @@ export class DummyService {
         return Math.floor(Math.random() * 5000);
     }
 
-    async emitToInformer(messageToInformer){
-        this.informerMS.emit(INFORMER, messageToInformer);
-        return
-    }
 }
