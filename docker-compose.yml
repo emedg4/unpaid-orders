@@ -1,7 +1,14 @@
 version: '3.8'
 services:
-  UnpaidOrders:
-    container_name: UnpaidOrders
+  app:
+    container_name: UnpaidOrdersAPP
+    build:
+      context: .
+    restart: always
+    ports:
+      - '3005:3005'
+  UnpaidOrdersDB:
+    container_name: UnpaidOrdersDB
     image: postgres:14.1-alpine
     restart: always
     environment:
