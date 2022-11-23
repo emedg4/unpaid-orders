@@ -33,8 +33,8 @@ export class DummyService {
             }
             const messageToInformer1: LoggingMessage = {
                 pedido: data.pedido,
-                microservicioOrigen: `Dummy1Process`,
-                accion: "Recibiendo el pedido en Dummy1Process...Procesando ",
+                microservicioOrigen: `SAP`,
+                accion: "Recibiendo el pedido en SAP...Procesando ",
                 data: `Queue --${DUMMY1}`
             }
             this.informerClient.emit(INFORMER, messageToInformer1)
@@ -60,8 +60,8 @@ export class DummyService {
             }
             const messageToInformer1: LoggingMessage = {
                 pedido: data.pedido,
-                microservicioOrigen: `Dummy2Process`,
-                accion: "Recibiendo el pedido en Dummy2Process...Procesando ",
+                microservicioOrigen: `Facturacion`,
+                accion: "Recibiendo el pedido en Facturacion...Procesando ",
                 data: `Queue --${DUMMY2}`
             }
     
@@ -87,8 +87,8 @@ export class DummyService {
             }
             const messageToInformer1: LoggingMessage = {
                 pedido: data.pedido,
-                microservicioOrigen: `Dummy3Process`,
-                accion: "Recibiendo el pedido en Dummy3Process...Procesando ",
+                microservicioOrigen: `Revision Sovos`,
+                accion: "Recibiendo el pedido en Revision Sovos...Procesando ",
                 data: `Queue --${DUMMY3}`
             }
             this.informerClient.emit(INFORMER, messageToInformer1)
@@ -113,8 +113,8 @@ export class DummyService {
             }
             const messageToInformer1: LoggingMessage = {
                 pedido: data.pedido,
-                microservicioOrigen: `Dummy4Process`,
-                accion: "Recibiendo el pedido en Dummy4Process...Procesando ",
+                microservicioOrigen: `Generar boleta`,
+                accion: "Recibiendo el pedido en Generar boleta...Procesando ",
                 data: `Queue --${DUMMY4}`
             }
             this.informerClient.emit(INFORMER, messageToInformer1)
@@ -139,8 +139,8 @@ export class DummyService {
             }
             const messageToInformer1: LoggingMessage = {
                 pedido: data.pedido,
-                microservicioOrigen: `Dummy5Process`,
-                accion: "Recibiendo el pedido en Dummy5Process...Procesando ",
+                microservicioOrigen: `Finalizacion de pedido`,
+                accion: "Recibiendo el pedido en Finalizacion de pedido...Procesando ",
                 data: `Queue --${DUMMY5}`
             }
             this.informerClient.emit(INFORMER, messageToInformer1)
@@ -151,7 +151,7 @@ export class DummyService {
     }
 
     async getARandomNumber(){
-        return Math.floor(Math.random() * 5000);
+        return Math.floor(Math.random() * 10000);
     }
 
 }

@@ -23,7 +23,7 @@ export class ValidateUnpaidOrderCron {
         this.logger = new Logger(ValidateUnpaidOrderCron.name);
     }
 
-    @Interval(1000)
+    @Interval(2000)
     async validateOrders(){
         const allOrders = await this.unpaidOrdersRepository.getAll()
 
