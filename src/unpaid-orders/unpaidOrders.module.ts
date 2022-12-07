@@ -1,33 +1,21 @@
-import { HttpModule } from "@nestjs/axios";
-import { forwardRef, Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { DummyModule } from "src/dummy/dummy.module";
-import { MODIFY_ORDERS, UNPAID_ORDERS } from "./constants/services";
-import { UnpaidOrdersEntity } from "./entities/UnpaidOrders.entity";
-import { ModifyOrderMicroserviceModule } from "./microservices/modifyOrders/modifyOrderMs.module";
-import { UnpaidOrderMicroserviceModule } from "./microservices/unpaidOrders/unpaidOrdersMs.module";
+import { Module } from "@nestjs/common";
+import { TO_ORDERS_ENGINE, UNPAID_ORDERS } from "./constants/services";
+import { UnpaidOrderMicroserviceModule } from "../microservices/unpaidOrders/unpaidOrdersMs.module";
 import { UnpaidOrdersController } from "./unpaidOrders.controller";
-import { UnpaidOrdersRepository } from "./unpaidOrders.repository";
 import { UnpaidOrdersService } from "./unpaidOrders.service";
-import { ValidateUnpaidOrderCron } from "./validateUnpaidOrder.service";
+import { OrderLifeCycleModule } from "src/microservices/orderLifeCycle/orderLifeCycle.module";
 
 @Module({
-    imports:[ TypeOrmModule.forFeature([UnpaidOrdersEntity]),
-
-              UnpaidOrderMicroserviceModule.register({
+    imports:[UnpaidOrderMicroserviceModule.register({
                 name: UNPAID_ORDERS
               }),
-              
-              ModifyOrderMicroserviceModule.register({
-                name: MODIFY_ORDERS
-              }),
-              HttpModule, forwardRef(() => DummyModule)  ,
-            ],
+             OrderLifeCycleModule.register({
+              name: TO_ORDERS_ENGINE
+             })],
     controllers:[UnpaidOrdersController],
-    providers:[ UnpaidOrdersRepository,
-                UnpaidOrdersService,
-                ValidateUnpaidOrderCron],
+    providers:[UnpaidOrdersService,
+                ],
 
-    exports:[UnpaidOrdersService,UnpaidOrdersRepository, ValidateUnpaidOrderCron]
+    exports:[UnpaidOrdersService]
 })
 export class UnpaidOrdersModule {}

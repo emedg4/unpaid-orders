@@ -1,10 +1,8 @@
 import { Controller, Get, Logger } from "@nestjs/common";
 import { Ctx, EventPattern, Payload, RmqContext } from "@nestjs/microservices";
 import { UNPAID_ORDERS } from "./constants/services";
-import { GETALL } from "./constants/uris";
-import { UnpaidOrders } from "./dto/unpaidOrder.dto";
-import { UnpaidOrdersEntity } from "./entities/UnpaidOrders.entity";
-import { UnpaidOrderMicroserviceService } from "./microservices/unpaidOrders/unpaidOrdersMs.service";
+import { ModifiedOrder } from "./dto/modifiedOrder";
+import { UnpaidOrderMicroserviceService } from "../microservices/unpaidOrders/unpaidOrdersMs.service";
 import { UnpaidOrdersService } from "./unpaidOrders.service";
 
 @Controller()
@@ -16,30 +14,14 @@ export class UnpaidOrdersController {
     }
 
     @EventPattern(UNPAID_ORDERS)
-    async getNewUnpaidOrder( @Payload() data: UnpaidOrders, @Ctx() context: RmqContext ){
+    async getNewUnpaidOrder( @Payload() payload: ModifiedOrder, @Ctx() context: RmqContext ){
         try {
-            const newUnpaidOrder:UnpaidOrdersEntity = await this.unpaidOrdersService.createUnpaidOrder(data);
-            this.unpaidOrdersMs.ack(context)
-            this.logger.log(`New Order created: ${data.pedido}`)
-            
+            const unpaidOrdersServiceResponse = await this.unpaidOrdersService.processOrder(payload);
+            this.unpaidOrdersMs.ack(context)            
             return;
         } catch (e) {
             this.logger.log(e)
             return;
         }
     }
-
-    @Get(GETALL)
-    async getAll(){
-        try {
-            
-            this.logger.log(`All unpaid orders retrieved`)
-            return await this.unpaidOrdersService.getAllOrders()
-            
-        } catch (e) {
-            this.logger.error(e)
-            return;
-        }
-    }
-
 }

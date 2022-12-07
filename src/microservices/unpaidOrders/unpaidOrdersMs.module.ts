@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { Dummy5MicroserviceService } from './dummy5Ms.service';
+import { UnpaidOrderMicroserviceService } from './unpaidOrdersMs.service';
 import { ClientsModule, Transport } from '@nestjs/microservices'
 import { ConfigService } from '@nestjs/config'
 
@@ -8,13 +8,13 @@ interface RmqModuleOptions {
 }
 
 @Module({
-  providers: [Dummy5MicroserviceService],
-  exports: [Dummy5MicroserviceService]
+  providers: [UnpaidOrderMicroserviceService],
+  exports: [UnpaidOrderMicroserviceService]
 })
-export class Dummy5MicroserviceModule {
+export class UnpaidOrderMicroserviceModule {
   static register({ name }: RmqModuleOptions ): DynamicModule {
     return {
-      module: Dummy5MicroserviceModule,
+      module: UnpaidOrderMicroserviceModule,
       imports: [
         ClientsModule.registerAsync([
           {
@@ -23,7 +23,7 @@ export class Dummy5MicroserviceModule {
               transport: Transport.RMQ,
               options: {
                 urls: [configService.get<string>('rbmq.url')],
-                queue: configService.get<string>('rbmq.dummy5_queue')
+                queue: configService.get<string>('rbmq.queue.unpaidOrders')
               },
             }),
             inject: [ConfigService]

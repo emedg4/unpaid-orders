@@ -1,30 +1,47 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { UnpaidOrders } from "./dto/unpaidOrder.dto";
-import { UnpaidOrdersEntity } from "./entities/UnpaidOrders.entity";
-import { UnpaidOrdersRepository } from "./unpaidOrders.repository";
+import { Inject, Injectable, Logger } from "@nestjs/common";
+import { ClientProxy } from "@nestjs/microservices";
+import { PAGADO } from "./constants/Estatus";
+import { TO_ORDERS_ENGINE } from "./constants/services";
+import { ModifiedOrder } from "./dto/modifiedOrder";
+
 
 @Injectable()
 export class UnpaidOrdersService {
     private logger: Logger;
-    constructor( private unpaidOrdersRepository: UnpaidOrdersRepository){
+    constructor(
+        @Inject( TO_ORDERS_ENGINE ) private ordersEngineClient : ClientProxy
+    ){
         this.logger = new Logger(UnpaidOrdersService.name)
     }
 
-    async createUnpaidOrder( order: UnpaidOrders ): Promise<UnpaidOrdersEntity> {
-        const createOrder: UnpaidOrdersEntity = await this.unpaidOrdersRepository.create(order)
+    public async processOrder(modifiedOrder: ModifiedOrder){
+        const orderToModify: ModifiedOrder = modifiedOrder;
+        setTimeout( async () => {
+            /**
+             * 
+             * Now simulate a process where you validate if the
+             * order is already paid
+             * 
+             */
+            const isValid: boolean = await this.validateOrder();
+            if(isValid == true){
+                orderToModify.emmiterData.isDone = true;
+                orderToModify.emmiterData.isNew = false;
+                orderToModify.order.status_pago = PAGADO;
+                orderToModify.order.steps[modifiedOrder.emmiterData.stepNumber].done = true;
 
-        this.logger.log(`Created Order ${order.pedido}`)
-        return createOrder;
+                
+            }
+        
+
+        }, 5000);
     }
 
-    async deleteUnpaidOrder( order: string ) {
-        await this.unpaidOrdersRepository.delete(order)
+    private async validateOrder(): Promise<boolean>{
+        const num: number = await Math.floor(Math.random() * 2);
+        const response: boolean = num > 1 ? false : true;
+        return response
 
-        this.logger.log(`Deleted Order ${order}`)
-        return
     }
-
-    async getAllOrders(){
-        return await this.unpaidOrdersRepository.getAll()
-    }
+    
 }

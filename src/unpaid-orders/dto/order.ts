@@ -1,6 +1,7 @@
-import { QueueSteps } from "./queueSteps.dto";
+import { QueueSteps } from "./queueSteps";
 
 export class Order {
+    
     pedido: string;
 
     fecha_creacion: string;
