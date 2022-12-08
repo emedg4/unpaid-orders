@@ -10,4 +10,7 @@ export class EmiterData {
 
     isDone: boolean;
 
+    retry: boolean;
+
+
 }

@@ -8,6 +8,4 @@ export class QueueSteps {
 
     isManual: boolean;
 
-    retries: number;
-
 }

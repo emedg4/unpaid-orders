@@ -28,12 +28,24 @@ export class UnpaidOrdersService {
                 orderToModify.emmiterData.isDone = true;
                 orderToModify.emmiterData.isNew = false;
                 orderToModify.order.status_pago = PAGADO;
-                orderToModify.order.steps[modifiedOrder.emmiterData.stepNumber].done = true;
+                orderToModify.order.steps[orderToModify.emmiterData.stepNumber].done = true;
+                orderToModify.emmiterData.retry = false;
 
+                await this.ordersEngineClient.emit(TO_ORDERS_ENGINE, orderToModify);
+
+                return
                 
             }
-        
+            else{
+                orderToModify.emmiterData.isDone = false;
+                orderToModify.emmiterData.isNew = false;
+                orderToModify.order.steps[orderToModify.emmiterData.stepNumber].done = false;
+                orderToModify.emmiterData.retry = true;
 
+                await this.ordersEngineClient.emit(TO_ORDERS_ENGINE, orderToModify);
+
+                return
+            }
         }, 5000);
     }
 
